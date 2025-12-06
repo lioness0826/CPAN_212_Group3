@@ -31,23 +31,45 @@ app.get('/styles.css', (req, res) => {
   }
 });
 
-app.get('/images/:filename', (req, res) => {
-  const imagePath = path.join(__dirname, "..", "public", "images", req.params.filename);
-  if (fs.existsSync(imagePath)) {
-    res.sendFile(imagePath);
-  } else {
-    res.status(404).send('Image not found');
+// app.get('/images/:filename', (req, res) => {
+//   const imagePath = path.join(__dirname, "..", "public", "images", req.params.filename);
+//   if (fs.existsSync(imagePath)) {
+//     res.sendFile(imagePath);
+//   } else {
+//     res.status(404).send('Image not found');
+//   }
+// });
+
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
   }
-});
 
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+    }).then((mongoose) => {
+      console.log("MongoDB connected (serverless cached)");
+      return mongoose;
+    }).catch(err => {
+      console.error("MongoDB connection failed:", err);
+      throw err;
+    });
+  }
 
-mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 5000,
-}).then(() => {
-  console.log("✅ MongoDB connected");
-}).catch(err => {
-  console.error("❌ MongoDB error:", err);
-});
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+// Call connectDB immediately
+connectDB();
 
 
 app.use(session({
