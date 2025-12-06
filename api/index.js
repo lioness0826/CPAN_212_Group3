@@ -45,17 +45,29 @@ app.use((req, res, next) => {
   next();
 });
 
+const store = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI,
+  touchAfter: 24 * 3600,
+  crypto: {
+    secret: process.env.SESSION_SECRET || "secret"
+  },
+  mongoOptions: {
+    serverSelectionTimeoutMS: 5000,
+    maxPoolSize: 10,
+  }
+});
+
+store.on('error', (error) => {
+  console.error('Session store error:', error);
+});
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "secret",
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI,
-    touchAfter: 24 * 3600 
-  }),
+  store: store,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: 'lax' 
@@ -83,15 +95,49 @@ app.use("/movies", movieRoutes);
 app.get("/", (req, res) => res.render("home"));
 
 
-if (mongoose.connection.readyState === 0) {
-  mongoose.connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 5000,
-  })
-    .then(() => console.log("MongoDB connected"))
-    .catch(err => {
-      console.error("MongoDB connection error:", err);
+// if (mongoose.connection.readyState === 0) {
+//   mongoose.connect(process.env.MONGO_URI, {
+//     serverSelectionTimeoutMS: 5000,
+//   })
+//     .then(() => console.log("MongoDB connected"))
+//     .catch(err => {
+//       console.error("MongoDB connection error:", err);
+//     });
+// }
+
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected && mongoose.connection.readyState === 1) {
+    console.log('Using existing MongoDB connection');
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: 10,
     });
-}
+    
+    isConnected = db.connections[0].readyState === 1;
+    console.log('MongoDB connected, readyState:', mongoose.connection.readyState);
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    isConnected = false;
+    throw err;
+  }
+};
+
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection failed');
+    res.status(500).send('Database connection failed');
+  }
+});
 
 // Export for deployment
 module.exports = app;
