@@ -8,17 +8,23 @@ body {
     background-repeat: no-repeat; 
     background-attachment: fixed; 
     color: black;
+    padding-top: 70px;
 }
 
 header {
+    position: fixed;
+    top: 0;
+    left: 0; 
+    right: 0; 
+    width: 100%; 
+    z-index: 1000; 
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 15px 20px;
-    position: relative;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 16px 40px;
+  box-sizing: border-box;
 }
 
 header h1 {
@@ -28,11 +34,13 @@ header h1 {
     color: white;
 }
 
+
 nav a {
     color: white;
     text-decoration: none;
-    margin-left: 15px;
     font-weight: 500;
+    white-space: nowrap;
+    transition: 0.2s;
 }
 
 nav a:hover {
@@ -43,16 +51,19 @@ footer {
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     text-align: center;
-    padding: 10px 0;
-    position: fixed;
+    padding: 15px 0;
+    position: relative;
     bottom: 0;
     width: 100%;
+    z-index: 999;
+    margin-top: auto;
 }
 
 main {
     max-width: 900px;
     margin: 80px auto 60px auto;
-    padding: 20px;
+    padding: 0;
+    padding-bottom: 80px;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 15px;
@@ -113,6 +124,7 @@ form button {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 20px;
 }
 
 .movie-card:hover {
@@ -176,10 +188,16 @@ form button {
 
 
 .app-name {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   margin: 0;
+    font-size: 24px;
+    color: white;
+    font-weight: 600;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
 
@@ -212,6 +230,10 @@ form button {
 
 .main{
     text-align: center;
+}
+
+.add-form{
+    padding: 20px;
 }
 
 

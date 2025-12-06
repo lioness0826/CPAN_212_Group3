@@ -13,7 +13,7 @@
   <% if (!currentUser) { %>
     <p>Please <a href="/auth/login">login</a> or <a href="/auth/register">register</a> to continue.</p>
   <% } else { %>
-    <p>You are logged in! Explore movies and <a href="/movies/add">add a new movie</a>.</p>
+    <p>You are logged in! <a href="/movies">Explore movies</a></p>
   <% } %>
 </main>
 <%- include('partials/footer') %>

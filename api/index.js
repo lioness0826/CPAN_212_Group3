@@ -83,10 +83,9 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
-    secure: false,
+    secure: true,
     // debug
-    sameSite: 'none',
-domain: "cpan-212-group3.vercel.app"
+    sameSite: 'lax',
   }
 }));
 
