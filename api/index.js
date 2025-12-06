@@ -62,10 +62,6 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-    console.log('🔍 Debug - Path:', req.path);
-  console.log('🔍 Debug - Session:', req.sessionID);
-  console.log('🔍 Debug - UserId:', req.session.userId);
-  console.log('🔍 Debug - MongoDB State:', mongoose.connection.readyState);
   res.locals.currentUser = req.session.userId || null;
   next();
 });
@@ -75,7 +71,8 @@ app.use("/movies", movieRoutes);
 
 app.get("/", (req, res) => res.render("home"));
 
-
+// DEBUG: Check what Vercel actually reads
+console.log("MONGO_URI from env:", process.env.MONGO_URI);
 if (mongoose.connection.readyState === 0) {
   mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000,
