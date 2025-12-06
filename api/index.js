@@ -84,7 +84,9 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
     secure: false,
-    sameSite: 'lax'
+    // debug
+    sameSite: 'none',
+domain: "cpan-212-group3.vercel.app"
   }
 }));
 
