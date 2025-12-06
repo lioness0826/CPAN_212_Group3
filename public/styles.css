@@ -73,6 +73,7 @@ main {
 form {
     display: flex;
     flex-direction: column;
+    padding: 10px 20px;
 }
 
 form label {
@@ -232,9 +233,7 @@ nav {
     text-align: center;
 }
 
-.add-form{
-    padding: 20px;
-}
+
 
 
 
