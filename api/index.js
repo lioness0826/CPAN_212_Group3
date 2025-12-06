@@ -62,6 +62,10 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
+    console.log('🔍 Debug - Path:', req.path);
+  console.log('🔍 Debug - Session:', req.sessionID);
+  console.log('🔍 Debug - UserId:', req.session.userId);
+  console.log('🔍 Debug - MongoDB State:', mongoose.connection.readyState);
   res.locals.currentUser = req.session.userId || null;
   next();
 });
