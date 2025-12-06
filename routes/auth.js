@@ -76,7 +76,8 @@ router.post("/login", [
         return res.redirect("/auth/login");
       }
       console.log("Session saved, userId:", req.session.userId);
-      res.redirect("/");
+      res.redirect("/movies");
+      // debug
     });
 
   } catch (err) {
