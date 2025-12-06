@@ -19,25 +19,26 @@ router.post("/register", [
   const { username, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-try {
-  const user = new User({ username, email, password: hashedPassword });
-  await user.save();
-  console.log("Registration success, redirecting...");
+  try {
+    const user = new User({ username, email, password: hashedPassword });
+    await user.save();
+    console.log("Registration success, redirecting...");
 
-  req.session.userId = user._id;
-  
-  // wait for saving
-  req.session.save((err) => {
-    if (err) {
-      console.error("Session save error:", err);
-      return res.redirect("/auth/register");
-    }
-    console.log("Session saved, userId:", req.session.userId);
-    res.redirect("/");
-  });
-} catch (err) {
-  res.render("register", { errors: [{ msg: "Email already exists" }] });
-}
+    req.session.userId = user._id;
+    
+    // wait for saving
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.redirect("/auth/register");
+      }
+      console.log("Session saved, userId:", req.session.userId);
+      res.redirect("/");
+    });
+  } catch (err) {
+    res.render("register", { errors: [{ msg: "Email already exists" }] });
+  }
+}); 
 
 
 router.get("/login", (req, res) => res.render("login"));
