@@ -63,12 +63,17 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-   console.log('Path:', req.path);
+  console.log('Path:', req.path);
   console.log('SessionID:', req.sessionID);
   console.log('Session.userId:', req.session.userId);
+  console.log('Session.userId type:', typeof req.session.userId);
+  console.log('Full session:', JSON.stringify(req.session));
   console.log('MongoDB State:', mongoose.connection.readyState);
+  
   res.locals.currentUser = req.session.userId || null;
+  
   console.log('res.locals.currentUser:', res.locals.currentUser);
+  console.log('currentUser type:', typeof res.locals.currentUser);
   next();
 });
 
