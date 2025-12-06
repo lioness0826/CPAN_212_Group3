@@ -6,7 +6,8 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 require("dotenv").config();
-
+// DEBUG: Check what Vercel actually reads
+console.log("MONGO_URI from env:", process.env.MONGO_URI);
 
 const authRoutes = require("../routes/auth");
 const movieRoutes = require("../routes/movies");
@@ -71,8 +72,7 @@ app.use("/movies", movieRoutes);
 
 app.get("/", (req, res) => res.render("home"));
 
-// DEBUG: Check what Vercel actually reads
-console.log("MONGO_URI from env:", process.env.MONGO_URI);
+
 if (mongoose.connection.readyState === 0) {
   mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000,
