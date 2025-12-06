@@ -7,13 +7,18 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 require("dotenv").config();
 
-console.log("MONGO_URI from env:", process.env.MONGO_URI);
-
 const authRoutes = require("../routes/auth");
 const movieRoutes = require("../routes/movies");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
+
+app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  next();
+});
 
 
 app.get('/styles.css', (req, res) => {
@@ -35,32 +40,13 @@ app.get('/images/:filename', (req, res) => {
   }
 });
 
-app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  next();
-});
-
-
-if (mongoose.connection.readyState === 0) {
-  mongoose.connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 5000,
-  })
-    .then(() => console.log("MongoDB connected"))
-    .catch(err => {
-      console.error("MongoDB connection error:", err);
-    });
-}
-
-
-const store = MongoStore.create({
-  mongoUrl: process.env.MONGO_URI,
-  touchAfter: 24 * 3600,
-});
-
-store.on('error', (error) => {
-  console.error('Session store error:', error);
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 5000,
+}).then(() => {
+  console.log("✅ MongoDB connected");
+}).catch(err => {
+  console.error("❌ MongoDB error:", err);
 });
 
 
@@ -68,33 +54,26 @@ app.use(session({
   secret: process.env.SESSION_SECRET || "secret",
   resave: false,
   saveUninitialized: false,
-  store: store,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 7 * 24 * 60 * 60, // 7 days
+  }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: 'lax' 
+    sameSite: 'lax'
   }
 }));
 
-
 app.use((req, res, next) => {
-  console.log('Path:', req.path);
-  console.log('SessionID:', req.sessionID);
-  console.log('Session.userId:', req.session.userId);
-  console.log('Full session:', JSON.stringify(req.session));
-  console.log('MongoDB State:', mongoose.connection.readyState);
-  
+  console.log('Path:', req.path, '| SessionID:', req.sessionID, '| UserId:', req.session.userId);
   res.locals.currentUser = req.session.userId || null;
-  
-  console.log('✨ res.locals.currentUser:', res.locals.currentUser);
   next();
 });
 
 app.use("/auth", authRoutes);
 app.use("/movies", movieRoutes);
-
 app.get("/", (req, res) => res.render("home"));
-
 
 module.exports = app;
