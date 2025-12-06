@@ -47,32 +47,44 @@ router.post("/login", [
   check("email").isEmail(),
   check("password").notEmpty()
 ], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.render("login", { errors: errors.array() });
 
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) return res.render("login", { errors: [{ msg: "Invalid credentials" }] });
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("login", { errors: errors.array() });
+    }
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.render("login", { errors: [{ msg: "Invalid credentials" }] });
-    
-  // debug
-  console.log("Login success, user._id:", user._id);
-  console.log("user._id type:", typeof user._id);
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.render("login", { errors: [{ msg: "Invalid credentials" }] });
+    }
 
-  req.session.userId = user._id;
-  req.session.save((err) => {
-  if (err) {
-    console.error("Session save error:", err);
-    return res.redirect("/auth/login");
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.render("login", { errors: [{ msg: "Invalid credentials" }] });
+    }
+
+    // Debug
+    console.log("Login success, user._id:", user._id);
+
+    req.session.userId = user._id;
+    req.session.save(err => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.redirect("/auth/login");
+      }
+      console.log("Session saved, userId:", req.session.userId);
+      res.redirect("/");
+    });
+
+  } catch (err) {
+    console.error("ERROR in /auth/login:", err);
+    return res.status(500).render("login", { errors: [{ msg: "Internal Server Error" }] });
   }
-  console.log("Saved userId type:", typeof req.session.userId); 
-  console.log("Session saved, userId:", req.session.userId);
-  res.redirect("/");
 });
-});
+
 
 // Logout
 router.get("/logout", (req, res) => {

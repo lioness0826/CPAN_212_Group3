@@ -4,10 +4,10 @@ const { check, validationResult } = require("express-validator");
 const Movie = require("../models/Movie");
 const requireLogin = require("../middleware/requireLogin");
 
-// 所有 /movies 路由都必须登录
+
 router.use(requireLogin);
 
-// 检查电影是否属于当前用户
+
 async function checkOwner(req, res, next) {
   const movie = await Movie.findById(req.params.id);
   if (!movie) return res.redirect("/movies");
