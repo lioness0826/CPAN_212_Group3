@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/styles.css">
+<main>
+<form action="/movies/edit/<%= movie._id %>" method="POST">
+  <label>Title:</label><input type="text" name="title" value="<%= movie.title %>" required>
+  <label>Description:</label><textarea name="description" required><%= movie.description %></textarea>
+  <label>Year:</label><input type="number" name="year" value="<%= movie.year %>" required>
+  <label>Genres (comma separated):</label><input type="text" name="genres" value="<%= movie.genres.join(',') %>" required>
+  <label>Rating:</label><input type="number" step="0.1" name="rating" value="<%= movie.rating %>" required>
+  <button type="submit">Update Movie</button>
+</form>
+</main>
+<%- include('partials/footer') %>

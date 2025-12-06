@@ -1,0 +1,12 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/styles.css">
+<main class="main">
+  <h1>Welcome to Movie App</h1>
+
+  <% if (!currentUser) { %>
+    <p>Please <a href="/auth/login">login</a> or <a href="/auth/register">register</a> to continue.</p>
+  <% } else { %>
+    <p>You are logged in! Explore movies and <a href="/movies/add">add a new movie</a>.</p>
+  <% } %>
+</main>
+<%- include('partials/footer') %>

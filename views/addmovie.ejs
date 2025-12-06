@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/styles.css">
+
+<% if (typeof errors !== 'undefined') { %>
+  <ul class="errors">
+    <% errors.forEach(e => { %><li><%= e.msg %></li><% }) %>
+  </ul>
+<% } %>
+<main>
+<form action="/movies/add" method="POST">
+  <label>Title:</label><input type="text" name="title" required>
+  <label>Description:</label><textarea name="description" required></textarea>
+  <label>Year:</label><input type="number" name="year" required>
+  <label>Genres (comma separated):</label><input type="text" name="genres" required>
+  <label>Rating (0-10):</label><input type="number" step="0.1" name="rating" required>
+  <button type="submit" class="add-btn">Add Movie</button>
+</form>
+</main>
+<%- include('partials/footer') %>

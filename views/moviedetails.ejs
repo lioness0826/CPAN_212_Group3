@@ -1,0 +1,8 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/styles.css">
+
+<h1><%= movie.title %> (<%= movie.year %>)</h1>
+<p><strong>Genres:</strong> <%= movie.genres.join(", ") %></p>
+<p><strong>Rating:</strong> <%= movie.rating %></p>
+<p><%= movie.description %></p>
+<%- include('partials/footer') %>
