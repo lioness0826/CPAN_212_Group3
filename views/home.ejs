@@ -2,6 +2,11 @@
 <link rel="stylesheet" href="/styles.css">
 <main class="main">
   <h1>Welcome to Movie App</h1>
+    <div style="border: 2px solid red; padding: 10px; margin: 10px 0;">
+    <p><strong>Debug Info:</strong></p>
+    <p>currentUser: <%= currentUser %></p>
+    <p>Type: <%= typeof currentUser %></p>
+  </div>
 
   <% if (!currentUser) { %>
     <p>Please <a href="/auth/login">login</a> or <a href="/auth/register">register</a> to continue.</p>
