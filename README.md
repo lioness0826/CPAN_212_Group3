@@ -23,3 +23,5 @@ Create a .env file with: MONGO_URI=
 SESSION_SECRET=
 
 Run locally: npm run dev
+
+server.js is  only used to test locally
