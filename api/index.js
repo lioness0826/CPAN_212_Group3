@@ -71,7 +71,7 @@ async function connectDB() {
 // Call connectDB immediately
 connectDB();
 
-
+const isProd = process.env.NODE_ENV === "production";
 app.use(session({
   secret: process.env.SESSION_SECRET || "secret",
   resave: false,
@@ -81,12 +81,11 @@ app.use(session({
     ttl: 7 * 24 * 60 * 60, // 7 days
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    httpOnly: true,
-    secure: true,
-    // debug
-    sameSite: 'none',
-  }
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? "none" : "lax",
+}
 }));
 
 app.use((req, res, next) => {
