@@ -53,15 +53,24 @@ async function connectDB() {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
-    }).then((mongoose) => {
-      console.log("MongoDB connected (serverless cached)");
-      return mongoose;
-    }).catch(err => {
-      console.error("MongoDB connection failed:", err);
-      throw err;
-    });
+ 
+    const connectionOptions = {
+  
+      serverSelectionTimeoutMS: 10000, 
+ 
+      socketTimeoutMS: 45000, 
+  
+      family: 4, 
+    };
+
+    cached.promise = mongoose.connect(process.env.MONGO_URI, connectionOptions)
+      .then((mongoose) => {
+        console.log("MongoDB connected (serverless cached)");
+        return mongoose;
+      }).catch(err => {
+        console.error("MongoDB connection failed:", err);
+        throw err;
+      });
   }
 
   cached.conn = await cached.promise;
