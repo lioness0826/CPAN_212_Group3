@@ -9,6 +9,7 @@ require("dotenv").config();
 
 const authRoutes = require("../routes/auth");
 const movieRoutes = require("../routes/movies");
+app.set('trust proxy', 1);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
