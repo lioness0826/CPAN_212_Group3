@@ -11,13 +11,13 @@ router.use(requireLogin);
 async function checkOwner(req, res, next) {
   const movie = await Movie.findById(req.params.id);
   if (!movie) return res.redirect("/movies");
-  if (movie.addedBy.toString() !== req.session.userId)
+  if (movie.addedBy && movie.addedBy.toString() !== req.session.userId)
     return res.redirect("/movies");
   next();
 }
 
 router.get("/", async (req, res) => {
-  const movies = await Movie.find();
+  const movies = await Movie.find({ addedBy: req.session.userId }); 
   res.render("movielist", { movies });
 });
 

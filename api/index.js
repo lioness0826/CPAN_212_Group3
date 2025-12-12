@@ -78,13 +78,13 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
-    ttl: 7 * 24 * 60 * 60, // 7 days
+    ttl: 7 * 24 * 60 * 60, 
   }),
   cookie: {
   maxAge: 1000 * 60 * 60 * 24 * 7,
   httpOnly: true,
   secure: isProd,
-  sameSite: isProd ? "none" : "lax",
+  sameSite: isProd ? "none" : "lax", 
 }
 }));
 
